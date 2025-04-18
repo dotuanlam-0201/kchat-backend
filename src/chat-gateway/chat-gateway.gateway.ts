@@ -28,16 +28,4 @@ export class ChatGatewayGateway implements OnGatewayConnection, OnGatewayDisconn
     client.emit(`joined room: ${roomId}`)
     this.logger.log(`joined room: ${roomId}`)
   }
-  @SubscribeMessage(SOCKET_MESSAGE.leaveRoom)
-  handleLeaveRoom(client: Socket, roomId: string) {
-    client.leave(roomId)
-    client.emit(`leaved room: ${roomId}`)
-    this.logger.log(`leaved room: ${roomId}`)
-  }
-
-  @SubscribeMessage(SOCKET_MESSAGE.getMessages)
-  handleGetMessages(client: Socket, roomId: string) {
-    this.logger.log(`Fetching messages for room: ${roomId}`);
-    client.emit(SOCKET_MESSAGE.messagesHistory, "message ne");
-  }
 }
