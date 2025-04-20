@@ -1,4 +1,4 @@
-export enum SOCKET_MESSAGE {
+export enum SOCKET {
   joinRoom = 'joinRoom',
   leaveRoom = 'leaveRoom',
   getMessages = 'getMessages',

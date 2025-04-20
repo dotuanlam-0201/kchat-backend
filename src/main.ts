@@ -1,12 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { TransformInterceptor } from 'src/intercepter/transform.intercepter';
 import { AppModule } from './app.module';
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
     origin: '*', // In production, specify your frontend URL
   });
+  app.useGlobalInterceptors(new TransformInterceptor());
   const config = new DocumentBuilder()
     .setTitle('Telegram Service')
     .setDescription('The Telegram API description')
