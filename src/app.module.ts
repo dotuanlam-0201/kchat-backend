@@ -8,6 +8,8 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ChatGatewayModule } from './chat-gateway/chat-gateway.module';
 import { UserModule } from './user/user.module';
+import { RoomsModule } from './rooms/rooms.module';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [
@@ -17,16 +19,20 @@ import { UserModule } from './user/user.module';
     HealthModule,
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('MONG_DB_URI', ''), // fallback empty string if undefined
-      }),
+      useFactory: async (configService: ConfigService) => {
+        return ({
+          uri: configService.get<string>('MONG_DB_URI', ''), // fallback empty string if undefined
+        })
+      },
       inject: [ConfigService],
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET_KEY,
-    })
+    }),
+    RoomsModule,
+    MessagesModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -6,3 +6,8 @@ export enum SOCKET {
   deleteMessages = 'deleteMessages',
   messagesHistory = "messagesHistory"
 }
+
+export enum ROOM_TYPE {
+  single = 'single',
+  group = "group"
+}

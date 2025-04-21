@@ -10,6 +10,9 @@ export class UserDTO {
   @ApiPropertyOptional()
   avatarURL?: string;
 
+  @ApiPropertyOptional()
+  phoneNumber?: string;
+
   @ApiPropertyOptional({ example: 'Tuan Lam' })
   displayName?: string;
 }
