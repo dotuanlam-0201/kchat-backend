@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApiParam } from '@nestjs/swagger';
 import { RoomDTO } from 'src/rooms/dto/room.dto';
 import { RoomsService } from './rooms.service';
@@ -18,5 +18,10 @@ export class RoomsController {
   })
   deleteRoom(@Param() param: Record<string, string>) {
     return this.roomsService.deleteRoom(param.id)
+  }
+
+  @Get('/')
+  getRooms() {
+    return this.roomsService.getRooms()
   }
 }

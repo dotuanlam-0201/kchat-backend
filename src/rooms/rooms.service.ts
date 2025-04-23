@@ -2,7 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { HttpStatusCode } from 'axios';
 import { Model } from 'mongoose';
-import { throwInternalServerError } from 'src/lib/catchError';
+import { throwInternalServerError } from 'src/lib/function/catchError';
 import { RoomDTO } from 'src/rooms/dto/room.dto';
 import { Room } from 'src/schema/room.schema';
 
@@ -23,6 +23,13 @@ export class RoomsService {
   async deleteRoom(id: string) {
     try {
       return await this.roomModel.findByIdAndDelete(id)
+    } catch (error) {
+      throwInternalServerError(error)
+    }
+  }
+  async getRooms() {
+    try {
+      return await this.roomModel.find().populate('participants')
     } catch (error) {
       throwInternalServerError(error)
     }

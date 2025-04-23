@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { LoginDTO } from 'src/auth/dto/auth.dto';
-import { throwInternalServerError } from 'src/lib/catchError';
+import { throwInternalServerError } from 'src/lib/function/catchError';
 import { UserDTO } from 'src/user/dto';
 import { UserService } from 'src/user/user.service';
 

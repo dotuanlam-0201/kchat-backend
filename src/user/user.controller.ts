@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Put, Request } from '@nestjs/common';
+import { AuthenticatedRequest } from 'src/lib/types/AuthenticatedRequest';
 import { UserDTO } from 'src/user/dto';
 import { UserService } from './user.service';
 
@@ -11,12 +12,12 @@ export class UserController {
     return this.userService.updateUser(dto)
   }
   @Get()
-  getUsers(@Request() req: Request) {
+  getUsers() {
     return this.userService.getUsers()
   }
   @Get('/me')
-  getMe(@Request() req: Request) {
-    return this.userService.getMe(req.headers['authorization'])
+  getMe(@Request() req: AuthenticatedRequest) {
+    return this.userService.getMe(req)
   }
 
 }

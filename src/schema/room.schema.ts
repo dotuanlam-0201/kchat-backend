@@ -5,7 +5,8 @@ import { User } from "src/schema/user.schema";
 import { ROOM_TYPE } from "src/types/enum";
 
 @Schema({
-  versionKey: false
+  versionKey: false,
+  timestamps: true
 })
 export class Room {
   @Prop({ type: [{ type: Types.ObjectId, ref: User.name }], required: true })

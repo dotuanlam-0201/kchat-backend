@@ -10,7 +10,8 @@ export type UserDocument = HydratedDocument<User>;
       delete ret['password']
       return ret
     }
-  }
+  },
+  timestamps: true
 })
 export class User {
   @Prop({ required: true, unique: true })

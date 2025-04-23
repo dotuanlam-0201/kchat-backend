@@ -1,9 +1,11 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
+import { get, omit } from 'lodash';
 import { Model } from 'mongoose';
-import { throwInternalServerError } from 'src/lib/catchError';
+import { throwInternalServerError } from 'src/lib/function/catchError';
+import { AuthenticatedRequest } from 'src/lib/types/AuthenticatedRequest';
 import { User } from 'src/schema/user.schema';
 import { UserDTO } from 'src/user/dto';
 
@@ -51,13 +53,10 @@ export class UserService {
       throwInternalServerError(error)
     }
   }
-  async getMe(token?: string) {
+  async getMe(req: AuthenticatedRequest) {
     try {
-      if (!token) throw new UnauthorizedException()
-      const jwtDecode = await this.jwtService.verifyAsync(token)
-      if (!jwtDecode) throw new UnauthorizedException()
-      const email = jwtDecode._doc.email
-      return await this.userModel.findOne({ email })
+      const user = get(req.user, "_doc")
+      return omit(user, 'password')
     } catch (error) {
       throwInternalServerError(error)
     }
