@@ -53,9 +53,16 @@ export class UserService {
       throwInternalServerError(error)
     }
   }
+  async getUserById(id: string) {
+    try {
+      return await this.userModel.findById(id)
+    } catch (error) {
+      throwInternalServerError(error)
+    }
+  }
   async getMe(req: AuthenticatedRequest) {
     try {
-      const user = get(req.user, "_doc")
+      const user = get(req, 'user')
       return omit(user, 'password')
     } catch (error) {
       throwInternalServerError(error)

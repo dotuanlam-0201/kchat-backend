@@ -11,7 +11,7 @@ export type UserDocument = HydratedDocument<User>;
       return ret
     }
   },
-  timestamps: true
+  timestamps: true,
 })
 export class User {
   @Prop({ required: true, unique: true })
@@ -26,3 +26,5 @@ export class User {
   phoneNumber: string
 }
 export const UserSchema = SchemaFactory.createForClass(User)
+
+

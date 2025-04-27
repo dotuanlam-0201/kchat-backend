@@ -4,7 +4,8 @@ export enum SOCKET {
   getMessages = 'getMessages',
   sendMessage = 'sendMessage',
   deleteMessages = 'deleteMessages',
-  messagesHistory = "messagesHistory"
+  messagesHistory = "messagesHistory",
+  getLastMessage = "getLastMessage",
 }
 
 export enum ROOM_TYPE {

@@ -9,7 +9,16 @@ export class MessagesService {
   constructor(@InjectModel(Message.name) private messageModel: Model<Message>) { }
   async addMessage(dto) {
     try {
-      return await new this.messageModel.save(dto)
+      return await new this.messageModel(dto).save()
+    } catch (error) {
+      catchError(error)
+    }
+  }
+  async getMessages(roomId?: string) {
+    try {
+      return this.messageModel.find({
+        roomId: roomId
+      }).populate('author').exec()
     } catch (error) {
       catchError(error)
     }

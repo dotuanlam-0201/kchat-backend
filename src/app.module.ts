@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { HealthModule } from 'src/heath/health.module';
 import { AppController } from './app.controller';
@@ -23,7 +24,7 @@ import { UserModule } from './user/user.module';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
         return ({
-          uri: configService.get<string>('MONG_DB_URI', ''), // fallback empty string if undefined
+          uri: configService.get<string>('MONG_DB_URI', ''),
         })
       },
       inject: [ConfigService],
@@ -34,12 +35,22 @@ import { UserModule } from './user/user.module';
       secret: process.env.JWT_SECRET_KEY,
     }),
     RoomsModule,
-    MessagesModule
+    MessagesModule,
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60000,
+          limit: 10,
+        },
+      ],
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService, {
-    provide: APP_GUARD,
-    useClass: AuthGuard,
-  },],
+  providers: [AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    }
+  ],
 })
 export class AppModule { }

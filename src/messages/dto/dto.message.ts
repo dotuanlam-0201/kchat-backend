@@ -1,36 +1,52 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsArray, IsMongoId, IsOptional, IsString } from 'class-validator';
 
 export class MessageDTO {
   @ApiProperty({
-    description: 'The unique identifier of the room where the message is sent',
-    example: 'room-abc123',
+    description: 'User ID of the author',
+    example: '',
+    required: true
   })
-  @IsString()
-  @IsNotEmpty()
+  @IsMongoId()
+  author: string;
+
+  @ApiProperty({
+    description: 'Room ID where the message belongs',
+    example: '',
+    required: true
+  })
+  @IsMongoId()
   roomId: string;
 
-  @ApiProperty({
-    description: 'The ID of the sender sending the message',
-    example: 'user-xyz456',
+  @ApiPropertyOptional({
+    description: 'Text content of the message',
+    example: 'Hello world!'
   })
   @IsString()
-  @IsNotEmpty()
-  senderId: string;
-
-  @ApiProperty({
-    description: 'The content of the message',
-    example: 'Hello everyone!',
-  })
-  @IsString()
-  @IsNotEmpty()
-  text: string;
-
-  @ApiProperty({
-    description: 'Optional timestamp when the message was created',
-    example: 1713886200000,
-    required: false,
-  })
   @IsOptional()
-  timestamp?: number;
+  text?: string;
+
+  @ApiPropertyOptional({
+    description: 'URL to an attached file',
+    example: ''
+  })
+  @IsString()
+  @IsOptional()
+  fileURL?: string;
+
+  @ApiPropertyOptional({
+    description: 'URL to an attached image',
+    example: ''
+  })
+  @IsString()
+  @IsOptional()
+  imgURL?: string;
+
+  @ApiPropertyOptional({
+    description: 'Array of emotion reactions to the message',
+    example: []
+  })
+  @IsArray()
+  @IsOptional()
+  emotions?: string[];
 }
