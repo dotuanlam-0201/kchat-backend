@@ -17,6 +17,6 @@ export class Message {
   @Prop()
   imgURL?: string
   @Prop()
-  emotions?: Array<string>
+  reactions?: Array<string>
 }
 export const MessageSchema = SchemaFactory.createForClass(Message)

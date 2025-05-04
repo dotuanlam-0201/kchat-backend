@@ -48,5 +48,5 @@ export class MessageDTO {
   })
   @IsArray()
   @IsOptional()
-  emotions?: string[];
+  reactions?: string[];
 }

@@ -43,8 +43,12 @@ export class ChatGatewayGateway implements OnGatewayConnection, OnGatewayDisconn
       }
     }
     this.server.to(roomId).emit(SOCKET.getMessages, response)
-    this.server.to(roomId).emit(SOCKET.getLastMessage), (response)
-    this.logger.log(payload)
+    this.server.emit(SOCKET.updateLastMessage, response);
     this.chatGatewayService.addMessage(payload)
+  }
+
+  @SubscribeMessage(SOCKET.reactionMessage)
+  handleReactionMessage(@ConnectedSocket() client: Socket, @MessageBody() payload: MessageDTO) {
+    this.server.to(payload.roomId).emit(SOCKET.updateLastMessage, payload);
   }
 }
