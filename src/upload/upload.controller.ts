@@ -2,7 +2,7 @@ import { Controller, HttpStatus, ParseFilePipeBuilder, Post, UploadedFile, UseIn
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOperation } from '@nestjs/swagger';
 import { Public } from 'src/auth/auth.guard';
-import { FileUploadDto } from 'upload/dto/upload.dto';
+import { FileUploadDto } from 'src/upload/dto/upload.dto';
 import { UploadService } from './upload.service';
 
 @Controller('upload')

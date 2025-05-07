@@ -1,6 +1,5 @@
 # Use the official Node.js image as the base image
 FROM node:22
-
 # Set the working directory inside the container
 WORKDIR /usr/src/app
 
@@ -16,7 +15,7 @@ COPY . .
 # Build the NestJS application
 RUN yarn build
 # Expose the application port
-EXPOSE 8080
 
+EXPOSE 8080
 # Command to run the application
-CMD ["node", "dist/main"]
+CMD ["yarn", "start:prod"]

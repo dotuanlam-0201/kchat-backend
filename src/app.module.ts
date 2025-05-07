@@ -6,7 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { HealthModule } from 'src/heath/health.module';
-import { UploadModule } from 'upload/upload.module';
+import { UploadModule } from 'src/upload/upload.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
