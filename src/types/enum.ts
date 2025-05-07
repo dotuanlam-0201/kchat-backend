@@ -6,7 +6,8 @@ export enum SOCKET {
   deleteMessages = 'deleteMessages',
   messagesHistory = "messagesHistory",
   updateLastMessage = "updateLastMessage",
-  reactionMessage = "reactionMessage",
+  updateLastMessageWithReaction = "updateLastMessageWithReaction",
+  reactMessage = "reactMessage",
 }
 
 export enum ROOM_TYPE {

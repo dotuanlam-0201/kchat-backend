@@ -47,8 +47,17 @@ export class ChatGatewayGateway implements OnGatewayConnection, OnGatewayDisconn
     this.chatGatewayService.addMessage(payload)
   }
 
-  @SubscribeMessage(SOCKET.reactionMessage)
-  handleReactionMessage(@ConnectedSocket() client: Socket, @MessageBody() payload: MessageDTO) {
-    this.server.to(payload.roomId).emit(SOCKET.updateLastMessage, payload);
+  @SubscribeMessage(SOCKET.reactMessage)
+  async handleReactionMessage(@ConnectedSocket() client: Socket, @MessageBody() payload: MessageDTO) {
+    const { roomId, author } = payload
+    const authorInfo = await this.userService.getUserById(author)
+    const response = {
+      ...payload, ...{
+        author: authorInfo
+      }
+    }
+    this.chatGatewayService.upDateMessage(payload)
+    this.server.emit(SOCKET.updateLastMessageWithReaction, response);
+    this.logger.log(payload)
   }
 }

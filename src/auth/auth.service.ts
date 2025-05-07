@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { LoginDTO } from 'src/auth/dto/auth.dto';
 import { throwInternalServerError } from 'src/lib/function/catchError';
-import { UserDTO } from 'src/user/dto';
+import { AuthenticationUserDTO } from 'src/user/dto';
 import { UserService } from 'src/user/user.service';
 
 
@@ -30,7 +30,7 @@ export class AuthService {
       throwInternalServerError(error)
     }
   }
-  async signup(dto: UserDTO) {
+  async signup(dto: AuthenticationUserDTO) {
     return this.userService.addUser(dto)
   }
 }

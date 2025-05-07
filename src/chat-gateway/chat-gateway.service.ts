@@ -18,4 +18,7 @@ export class ChatGatewayService {
       catchError(error)
     }
   }
+  async upDateMessage(dto: MessageDTO) {
+    return this.messageService.updateMessage(dto)
+  }
 }

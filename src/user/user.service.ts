@@ -2,18 +2,18 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
-import { get, omit } from 'lodash';
+import { get } from 'lodash';
 import { Model } from 'mongoose';
 import { throwInternalServerError } from 'src/lib/function/catchError';
 import { AuthenticatedRequest } from 'src/lib/types/AuthenticatedRequest';
 import { User } from 'src/schema/user.schema';
-import { UserDTO } from 'src/user/dto';
+import { AuthenticationUserDTO, UserDTO } from 'src/user/dto';
 
 
 @Injectable()
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<User>, private jwtService: JwtService) { }
-  async addUser(dto: UserDTO) {
+  async addUser(dto: AuthenticationUserDTO) {
     try {
       const salt = await bcrypt.genSalt();
       const passwordHash = await bcrypt.hash(dto.password, salt);
@@ -29,10 +29,9 @@ export class UserService {
   }
   async updateUser(dto: UserDTO) {
     try {
-      const { password, ...others } = dto
       const updateUser = await this.userModel.findOneAndUpdate({
         email: dto.email
-      }, others).exec()
+      }, dto).exec()
       if (!updateUser) throw new NotFoundException("User not found")
       return updateUser
     } catch (error) {
@@ -63,7 +62,9 @@ export class UserService {
   async getMe(req: AuthenticatedRequest) {
     try {
       const user = get(req, 'user')
-      return omit(user, 'password')
+      return await this.userModel.findOne({
+        email: user.email
+      })
     } catch (error) {
       throwInternalServerError(error)
     }

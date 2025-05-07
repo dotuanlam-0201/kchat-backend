@@ -11,6 +11,13 @@ export class MessageDTO {
   author: string;
 
   @ApiProperty({
+    description: 'Message Id',
+    example: '',
+  })
+  @IsMongoId()
+  _id: string;
+
+  @ApiProperty({
     description: 'Room ID where the message belongs',
     example: '',
     required: true
