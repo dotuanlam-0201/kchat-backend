@@ -11,7 +11,7 @@ import { ROOM_TYPE } from "src/types/enum";
 export class Room {
   @Prop({ type: [{ type: Types.ObjectId, ref: User.name }], required: true })
   participants: Types.ObjectId[];
-  @Prop({ type: Types.ObjectId, ref: Message.name, required: true })
+  @Prop({ type: Types.ObjectId, ref: Message.name })
   lastMessage: Types.ObjectId
   @Prop({ required: true })
   type: ROOM_TYPE
