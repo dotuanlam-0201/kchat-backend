@@ -18,4 +18,4 @@ RUN yarn build
 
 EXPOSE 8080
 # Command to run the application
-CMD ["yarn", "start:prod"]
+CMD ["node", "dist/main.js"]
