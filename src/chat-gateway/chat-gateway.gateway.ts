@@ -6,35 +6,37 @@ import { SOCKET } from 'src/types/enum';
 import { UserService } from 'src/user/user.service';
 import { ChatGatewayService } from './chat-gateway.service';
 
-@WebSocketGateway(80, {
+@WebSocketGateway({
   namespace: 'events',
   transports: ['websocket'],
   cors: {
     origin: '*'
-  }
+  },
+  allowEIO3: true
 })
+
 export class ChatGatewayGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private logger = new Logger()
   @WebSocketServer()
   private server: Server;
   constructor(
     private readonly chatGatewayService: ChatGatewayService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
   ) { }
-  handleConnection(client: Socket, ...args: any[]) {
-    this.logger.log(`Connected: ${client.id}`)
+  async handleConnection(socket: Socket, ...args: any[]) {
+    this.logger.log(`Connected: ${socket.id}`)
   }
-  handleDisconnect(client: Socket) {
-    this.logger.log(`Disconnected: ${client.id}`)
+  handleDisconnect(socket: Socket) {
+    this.logger.log(`Disconnected: ${socket.id}`)
   }
   @SubscribeMessage(SOCKET.joinRoom)
-  handleJoinRoom(@ConnectedSocket() client: Socket, @MessageBody() roomId: string) {
-    this.server.socketsJoin(roomId);
-    this.logger.log(`Client ${client.id} joined room: ${roomId}`);
-    client.emit(SOCKET.joinRoom, { roomId });
+  handleJoinRoom(@ConnectedSocket() socket: Socket, @MessageBody() roomId: string) {
+    this.server.socketsJoin(roomId)
+    this.logger.log(`socket ${socket.id} joined room: ${roomId}`);
+    socket.emit(SOCKET.joinRoom, { roomId });
   }
   @SubscribeMessage(SOCKET.sendMessage)
-  async handleSendMessage(@ConnectedSocket() client: Socket, @MessageBody() payload: MessageDTO) {
+  async handleSendMessage(@ConnectedSocket() socket: Socket, @MessageBody() payload: MessageDTO) {
     const { roomId, author } = payload
     const authorInfo = await this.userService.getUserById(author)
     const response = {
@@ -42,22 +44,9 @@ export class ChatGatewayGateway implements OnGatewayConnection, OnGatewayDisconn
         author: authorInfo
       }
     }
+    this.logger.log(`Broadcasting to room ${roomId}: ${JSON.stringify(response)}`);
     this.server.to(roomId).emit(SOCKET.getMessages, response)
-    this.server.emit(SOCKET.updateLastMessage, response);
+    this.server.emit(SOCKET.updateLastMessage, response)
     this.chatGatewayService.addMessage(payload)
-  }
-
-  @SubscribeMessage(SOCKET.reactMessage)
-  async handleReactionMessage(@ConnectedSocket() client: Socket, @MessageBody() payload: MessageDTO) {
-    const { roomId, author } = payload
-    const authorInfo = await this.userService.getUserById(author)
-    const response = {
-      ...payload, ...{
-        author: authorInfo
-      }
-    }
-    this.chatGatewayService.upDateMessage(payload)
-    this.server.emit(SOCKET.updateLastMessageWithReaction, response);
-    this.logger.log(payload)
   }
 }
