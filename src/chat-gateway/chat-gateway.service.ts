@@ -9,6 +9,19 @@ export class ChatGatewayService {
     private readonly messageService: MessagesService,
     private readonly roomService: RoomsService
   ) { }
+  private onlineUsers: Map<string, string> = new Map(); // Map<userId, socketId>
+
+  setUserOnline(userId: string, socketId: string) {
+    this.onlineUsers.set(userId, socketId);
+  }
+
+  setUserOffline(userId: string) {
+    this.onlineUsers.delete(userId);
+  }
+
+  getOnlineUsers(): Map<string, string> {
+    return this.onlineUsers;
+  }
   async addMessage(dto: MessageDTO) {
     try {
       const message = await this.messageService.addMessage(dto)

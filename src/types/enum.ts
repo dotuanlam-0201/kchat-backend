@@ -8,6 +8,7 @@ export enum SOCKET {
   updateLastMessage = "updateLastMessage",
   updateLastMessageWithReaction = "updateLastMessageWithReaction",
   reactMessage = "reactMessage",
+  onlineUsers = "onlineUsers",
 }
 
 export enum ROOM_TYPE {

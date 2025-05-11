@@ -19,5 +19,8 @@ export class UserController {
   getMe(@Request() req: AuthenticatedRequest) {
     return this.userService.getMe(req)
   }
-
+  @Get('online')
+  getOnlineUsers() {
+    return this.userService.getOnlineUsers()
+  }
 }

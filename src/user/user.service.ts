@@ -2,17 +2,19 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
-import { get } from 'lodash';
+import { Request } from 'express';
 import { Model } from 'mongoose';
+import { ChatGatewayService } from 'src/chat-gateway/chat-gateway.service';
 import { throwInternalServerError } from 'src/lib/function/catchError';
 import { AuthenticatedRequest } from 'src/lib/types/AuthenticatedRequest';
 import { User } from 'src/schema/user.schema';
 import { AuthenticationUserDTO, UserDTO } from 'src/user/dto';
 
-
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>, private jwtService: JwtService) { }
+  constructor(@InjectModel(User.name) private userModel: Model<User>, private jwtService: JwtService,
+    private chatGatewayService: ChatGatewayService
+  ) { }
   async addUser(dto: AuthenticationUserDTO) {
     try {
       const salt = await bcrypt.genSalt();
@@ -61,12 +63,31 @@ export class UserService {
   }
   async getMe(req: AuthenticatedRequest) {
     try {
-      const user = get(req, 'user')
+      const token = this.extractTokenFromHeader(req)
+      const user = this.jwtService.decode(token ?? '')?._doc
       return await this.userModel.findOne({
         email: user.email
       })
     } catch (error) {
       throwInternalServerError(error)
     }
+  }
+  async getUserFromToken(token?: string) {
+    const user = this.jwtService.decode(token ?? '')?._doc
+    try {
+      return await this.userModel.findOne({
+        email: user?.email
+      })
+    } catch (error) {
+      throwInternalServerError(error)
+    }
+  }
+  getOnlineUsers() {
+    const onlineUserIds = Array.from(this.chatGatewayService.getOnlineUsers().keys());
+    return onlineUserIds
+  }
+  extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = request?.headers?.authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
   }
 }

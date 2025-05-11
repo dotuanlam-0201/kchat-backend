@@ -19,7 +19,7 @@ export class MessagesService {
     try {
       return this.messageModel.find({
         roomId: roomId
-      }).populate('author').sort({ 'createdAt': 1 }).limit(100).exec()
+      }).populate('author').sort({ 'createdAt': 1 }).exec()
     } catch (error) {
       catchError(error)
     }
