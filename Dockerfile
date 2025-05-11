@@ -2,6 +2,7 @@
 FROM node:22
 # Set the working directory inside the container
 WORKDIR /usr/src/app
+ENV HOST 0.0.0.0
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
