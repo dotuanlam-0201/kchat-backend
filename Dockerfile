@@ -1,23 +1,30 @@
-# Use the official Node.js image as the base image
-FROM node:22
+# Use a specific node version for better stability
+FROM node:18-slim
 
-# Set the working directory inside the container
-WORKDIR /usr/src/app
+# Set the working directory
+WORKDIR /app
 
-# Copy package.json and package-lock.json to the working directory
+# Copy package files first for better layer caching
 COPY package*.json ./
 
-# Install the application dependencies
-RUN yarn install
+# Install dependencies
+RUN npm install
 
-# Copy the rest of the application files
+# Copy application code
 COPY . .
 
-# Build the NestJS application
-RUN yarn build
+# Build the application
+RUN npm run build
 
-# Expose the application port
+# Expose the port that will be used
 EXPOSE 8080
+
+# Set NODE_ENV to production for better performance
+ENV NODE_ENV=production
+
+# Add a simple health check to debug startup issues
+HEALTHCHECK --interval=5s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:${PORT:-8080} || exit 1
 
 # Command to run the application
 CMD ["node", "dist/main.js"]
