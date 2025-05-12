@@ -1,8 +1,9 @@
 # Use the official Node.js image as the base image
 FROM node:22
+
 # Set the working directory inside the container
 WORKDIR /usr/src/app
-ENV HOST 0.0.0.0
+
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
@@ -14,8 +15,9 @@ COPY . .
 
 # Build the NestJS application
 RUN yarn build
-# Expose the application port
 
+# Expose the application port
 EXPOSE 8080
+
 # Command to run the application
-CMD ["node", "dist/main.js","--" ,"--host", "0.0.0.0", "--port", "8080"],
+CMD ["node", "dist/main.js"]
