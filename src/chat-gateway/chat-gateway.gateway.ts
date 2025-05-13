@@ -73,11 +73,13 @@ export class ChatGatewayGateway implements OnGatewayConnection, OnGatewayDisconn
   async getUserFromCookie(socket: Socket): Promise<{ user: User | null; userId: string | null }> {
     try {
       const cookieHeader = socket.handshake.headers.cookie;
+      this.logger.log('cookieHeader', cookieHeader)
       if (!cookieHeader) {
         this.logger.warn('No cookie header found');
         return { user: null, userId: null };
       }
       const cookieAccessToken = cookieHeader.split('; ').find((s) => s.startsWith('accessToken='));
+      this.logger.log('cookieAccessToken', cookieAccessToken)
       if (!cookieAccessToken) {
         this.logger.warn('No accessToken cookie found');
         return { user: null, userId: null };
@@ -88,6 +90,8 @@ export class ChatGatewayGateway implements OnGatewayConnection, OnGatewayDisconn
         return { user: null, userId: null };
       }
       const user = await this.userService.getUserFromToken(token);
+      this.logger.log('user', user)
+
       if (!user || !user._id) {
         this.logger.warn('Invalid user or missing user ID');
         return { user: null, userId: null };
