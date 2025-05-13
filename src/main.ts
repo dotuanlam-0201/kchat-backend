@@ -6,7 +6,9 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
+  app.enableCors({
+    credentials: true,
+  });
   app.useGlobalInterceptors(new TransformInterceptor());
   const config = new DocumentBuilder()
     .setTitle('Telegram Service')

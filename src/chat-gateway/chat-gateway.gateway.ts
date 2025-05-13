@@ -10,9 +10,10 @@ import { ChatGatewayService } from './chat-gateway.service';
   namespace: 'events',
   transports: ['websocket'],
   cors: {
-    origin: '*'
+    origin: '*',
+    credentials: true, // This is CRUCIAL for cookies
   },
-  allowEIO3: true
+  allowEIO3: true,
 })
 
 export class ChatGatewayGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
