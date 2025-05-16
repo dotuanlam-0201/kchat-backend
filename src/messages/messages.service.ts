@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { catchError } from 'rxjs';
 import { MessageDTO } from 'src/messages/dto/dto.message';
 import { Message } from 'src/schema/message.schema';
@@ -20,7 +20,7 @@ export class MessagesService {
     const limit = Number(query?.limit)
     try {
       const messages = await this.messageModel.find({
-        roomId: new Types.ObjectId(roomId)
+        roomId: roomId
       }).sort({ createdAt: -1 }).limit(limit).populate('author').exec()
       return messages.toReversed()
     } catch (error) {
