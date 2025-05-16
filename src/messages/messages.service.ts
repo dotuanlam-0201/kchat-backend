@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { catchError } from 'rxjs';
 import { MessageDTO } from 'src/messages/dto/dto.message';
 import { Message } from 'src/schema/message.schema';
+import { QueryParameterBag } from './../../node_modules/@smithy/types/dist-types/http.d';
 
 @Injectable()
 export class MessagesService {
@@ -15,11 +16,13 @@ export class MessagesService {
       catchError(error)
     }
   }
-  async getMessages(roomId?: string) {
+  async getMessages(query: QueryParameterBag, roomId?: string,) {
+    const limit = Number(query?.limit)
     try {
-      return this.messageModel.find({
+      const messages = await this.messageModel.find({
         roomId: roomId
-      }).populate('author').sort({ 'createdAt': 1 }).exec()
+      }).sort({ createdAt: -1 }).limit(limit).populate('author').exec()
+      return messages.toReversed()
     } catch (error) {
       catchError(error)
     }
