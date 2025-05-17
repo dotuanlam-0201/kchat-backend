@@ -19,11 +19,7 @@ export class MessagesService {
   async getMessages(query: QueryParameterBag, roomId?: string,) {
     const limit = Number(query?.limit)
     try {
-      console.log('roomId', roomId)
-      console.log('type of roomid', typeof roomId)
-      const count = this.messageModel.countDocuments()
-      console.log('totalmessage', count)
-      return this.messageModel.find({
+      return await this.messageModel.find({
         roomId: roomId
       }).sort({ createdAt: -1 }).limit(limit).populate('author').exec()
     } catch (error) {
