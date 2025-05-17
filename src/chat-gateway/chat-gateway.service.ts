@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { catchError } from 'rxjs';
+import { throwInternalServerError } from 'src/lib/function/catchError';
 import { MessageDTO } from 'src/messages/dto/dto.message';
 import { MessagesService } from 'src/messages/messages.service';
 import { RoomsService } from 'src/rooms/rooms.service';
@@ -28,7 +28,7 @@ export class ChatGatewayService {
       await this.roomService.setLastMessage(dto.roomId, message?._id)
       return message
     } catch (error) {
-      catchError(error)
+      throwInternalServerError(error)
     }
   }
   async upDateMessage(dto: MessageDTO) {

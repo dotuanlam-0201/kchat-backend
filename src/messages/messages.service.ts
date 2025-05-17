@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { catchError } from 'rxjs';
 import { MessageDTO } from 'src/messages/dto/dto.message';
 import { Message } from 'src/schema/message.schema';
 import { QueryParameterBag } from './../../node_modules/@smithy/types/dist-types/http.d';
@@ -13,7 +12,7 @@ export class MessagesService {
     try {
       return await new this.messageModel(dto).save()
     } catch (error) {
-      catchError(error)
+      throwInternalServerError(error)
     }
   }
   async getMessages(query: QueryParameterBag, roomId?: string,) {
@@ -23,14 +22,14 @@ export class MessagesService {
         roomId: roomId
       }).sort({ createdAt: -1 }).limit(limit).populate('author').exec()
     } catch (error) {
-      catchError(error)
+      throwInternalServerError(error)
     }
   }
   async updateMessage(message: MessageDTO) {
     try {
       return this.messageModel.findByIdAndUpdate(message._id, message)
     } catch (error) {
-      catchError(error)
+      throwInternalServerError(error)
     }
   }
 }
