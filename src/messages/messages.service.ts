@@ -17,6 +17,10 @@ export class MessagesService {
   }
   async getMessages(roomId?: string) {
     try {
+      console.log('roomId', roomId)
+      console.log('type of roomid', typeof roomId)
+      const count = this.messageModel.countDocuments()
+      console.log('totalmessage', count)
       return this.messageModel.find({
         roomId: roomId
       }).populate('author').sort({ 'createdAt': 1 }).exec()
