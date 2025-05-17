@@ -2,16 +2,19 @@ import { Logger } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { MessageDTO } from 'src/messages/dto/dto.message';
+import { UserDocument } from 'src/schema/user.schema';
 import { SOCKET } from 'src/types/enum';
 import { UserService } from 'src/user/user.service';
 import { ChatGatewayService } from './chat-gateway.service';
 @WebSocketGateway({
   namespace: 'events',
-  transports: ['websocket'],
+  transports: ['websocket', 'polling'],
   cors: {
-    origin: '*'
+    origin: '*',
+    credentials: true, // This is CRUCIAL for cookies
+    allowedHeaders: ["token"],
   },
-  allowEIO3: true
+  allowEIO3: true,
 })
 
 export class ChatGatewayGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
@@ -27,14 +30,12 @@ export class ChatGatewayGateway implements OnGatewayConnection, OnGatewayDisconn
   }
   async handleConnection(socket: Socket, ...args: any[]) {
     const { userId } = await this.getUserFromCookie(socket);
-    if (!userId) {
-      this.logger.warn(`Connection rejected: Invalid or missing userId for socket ${socket.id}`);
-      return
+    if (userId) {
+      this.chatGatewayService.setUserOnline(userId, socket.id)
+      socket.data.userId = userId
     }
-    this.chatGatewayService.setUserOnline(userId, socket.id)
     this.logger.log(`Connected: ${socket.id}`)
     this.broadcastOnlineUsers()
-    socket.data.userId = userId
   }
   async handleDisconnect(socket: Socket) {
     const userId = socket.data.userId;
@@ -71,36 +72,21 @@ export class ChatGatewayGateway implements OnGatewayConnection, OnGatewayDisconn
     this.logger.log(`Broadcasting online users: ${onlineUserIds.join(', ') || 'none'}`);
     this.server.emit(SOCKET.onlineUsers, onlineUserIds)
   }
-  async getUserFromCookie(socket: Socket): Promise<{ user: any; userId: string | null }> {
+  async getUserFromCookie(socket: Socket): Promise<{ user: UserDocument | null; userId: string | null }> {
+    const token = socket.handshake.auth?.token
     try {
-      const cookieHeader = socket.handshake.headers.cookie;
-      if (!cookieHeader) {
-        this.logger.warn('No cookie header found');
-        return { user: null, userId: null };
+      const user = await this.userService.getUserFromToken(token)
+      if (!user) return {
+        user: null,
+        userId: null
       }
-      const cookieAccessToken = cookieHeader.split('; ').find((s) => s.startsWith('accessToken='));
-      if (!cookieAccessToken) {
-        this.logger.warn('No accessToken cookie found');
-        return { user: null, userId: null };
-      }
-
-      const token = cookieAccessToken.split('=')[1];
-      if (!token) {
-        this.logger.warn('Invalid accessToken format');
-        return { user: null, userId: null };
-      }
-
-      const user = await this.userService.getUserFromToken(token);
-      if (!user || !user._id) {
-        this.logger.warn('Invalid user or missing user ID');
-        return { user: null, userId: null };
-      }
-
-      const userId = user._id.toString();
-      return { user, userId };
+      const userId = user?._id.toString()
+      return { user, userId }
     } catch (error) {
-      this.logger.error(`Error extracting user from cookie: ${error.message}`);
-      return { user: null, userId: null };
+      return {
+        user: null,
+        userId: null
+      }
     }
   }
 }
