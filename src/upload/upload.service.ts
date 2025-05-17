@@ -27,7 +27,7 @@ export class UploadService {
     try {
       const resourceType = this.getResourceType(file.mimetype)
       const uploadfile = await this.uploadBufferToCloudinary(file.buffer, 'kchat', resourceType);
-      return uploadfile?.url
+      return uploadfile?.secure_url
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }

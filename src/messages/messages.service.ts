@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { throwInternalServerError } from 'src/lib/function/catchError';
 import { MessageDTO } from 'src/messages/dto/dto.message';
 import { Message } from 'src/schema/message.schema';
 import { QueryParameterBag } from './../../node_modules/@smithy/types/dist-types/http.d';
