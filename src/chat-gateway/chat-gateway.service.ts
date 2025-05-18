@@ -1,15 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Server } from 'socket.io';
 import { throwInternalServerError } from 'src/lib/function/catchError';
 import { MessageDTO } from 'src/messages/dto/dto.message';
 import { MessagesService } from 'src/messages/messages.service';
 import { RoomsService } from 'src/rooms/rooms.service';
+import { Room } from 'src/schema/room.schema';
+import { SOCKET } from 'src/types/enum';
 @Injectable()
 export class ChatGatewayService {
   constructor(
     private readonly messageService: MessagesService,
-    private readonly roomService: RoomsService
+    @Inject(forwardRef(() => RoomsService)) private readonly roomService: RoomsService
   ) { }
   private onlineUsers: Map<string, string> = new Map(); // Map<userId, socketId>
+  private server: Server;
+
+  setServer(server: Server) {
+    this.server = server;
+  }
+  emitRoomCreated(room: Room) {
+    this.server?.emit(SOCKET.roomCreated, room);
+  }
 
   setUserOnline(userId: string, socketId: string) {
     this.onlineUsers.set(userId, socketId);

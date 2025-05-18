@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
@@ -64,12 +64,14 @@ export class UserService {
   async getMe(req: AuthenticatedRequest) {
     try {
       const token = this.extractTokenFromHeader(req)
-      const user = this.jwtService.decode(token ?? '')?._doc
-      return await this.userModel.findOne({
-        email: user.email
+      const decodeTokenUser = this.jwtService.decode(token ?? '')?._doc
+      const user = await this.userModel.findOne({
+        email: decodeTokenUser.email
       })
+      if (!user) throw new Error()
+      return user
     } catch (error) {
-      throwInternalServerError(error)
+      throw new UnauthorizedException()
     }
   }
   async getUserFromToken(token?: string) {

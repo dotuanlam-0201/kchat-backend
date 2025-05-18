@@ -3,6 +3,7 @@ export enum SOCKET {
   leaveRoom = 'leaveRoom',
   getMessages = 'getMessages',
   sendMessage = 'sendMessage',
+  roomCreated = 'roomCreated',
   deleteMessages = 'deleteMessages',
   messagesHistory = "messagesHistory",
   updateLastMessage = "updateLastMessage",

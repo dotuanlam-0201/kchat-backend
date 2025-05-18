@@ -8,8 +8,9 @@ import { ChatGatewayService } from './chat-gateway.service';
 
 @Module({
   providers: [ChatGatewayGateway, ChatGatewayService],
-  imports: [SharedModule, MessagesModule, RoomsModule,
-    forwardRef(() => UserModule)
+  imports: [SharedModule, MessagesModule,
+    forwardRef(() => UserModule),
+    forwardRef(() => RoomsModule),
   ],
   exports: [ChatGatewayService],
 })

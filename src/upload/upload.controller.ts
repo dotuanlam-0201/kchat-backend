@@ -20,9 +20,6 @@ export class UploadController {
   })
   uploadSingle(@UploadedFile(
     new ParseFilePipeBuilder()
-      // .addFileTypeValidator({
-      //   fileType: new RegExp('[a-zA-Z0-9]+\.(png|jpeg|jpg)'),
-      // })
       .addMaxSizeValidator({
         maxSize: 1024 * 1024 * 5
       })

@@ -25,7 +25,8 @@ export class ChatGatewayGateway implements OnGatewayConnection, OnGatewayDisconn
     private readonly chatGatewayService: ChatGatewayService,
     private readonly userService: UserService,
   ) { }
-  afterInit(server: Socket) {
+  afterInit(socket: Socket) {
+    this.chatGatewayService.setServer(this.server)
     this.logger.log('WebSocket Gateway Initialized');
   }
   async handleConnection(socket: Socket, ...args: any[]) {
